@@ -1,2 +1,6 @@
-# dai-2022
-Anotaciones y TPs de DAI 2022. Repo libre de copy :)
+# Anotaciones y TPs de ORT Info 2022. Repo libre de copy :)
+
+## **DAI**:
+
+- API
+  - TP 1
