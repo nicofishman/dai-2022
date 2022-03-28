@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Pizzas.API.Utils;
 
 namespace Pizzas.API.Controllers
 {
@@ -15,13 +16,13 @@ namespace Pizzas.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(PizzasService.GetAll());
+            return Ok(BD.GetAll());
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var pizza = Pizza.Pizzas.FirstOrDefault(p => p.Id == id);
+            Pizza pizza = BD.GetById(id);
             if (pizza == null)
             {
                 return NotFound();
@@ -36,8 +37,8 @@ namespace Pizzas.API.Controllers
             {
                 return BadRequest();
             }
-            Pizza.Pizzas.Add(pizza);
-            return CreatedAtRoute("GetById", new { id = pizza.Id }, pizza);
+            int rowsAffected = BD.Add(pizza);
+            return CreatedAtAction(nameof(Create), new { id = pizza.Id }, pizza);
         }
 
         [HttpPut("{id}")]
@@ -47,15 +48,44 @@ namespace Pizzas.API.Controllers
             {
                 return BadRequest();
             }
-            var pizzaToUpdate = Pizza.Pizzas.FirstOrDefault(p => p.Id == id);
+            Pizza pizzaToUpdate = BD.GetById(id);
             if (pizzaToUpdate == null)
             {
                 return NotFound();
             }
-            pizzaToUpdate.Nombre = pizza.Nombre;
-            pizzaToUpdate.Descripcion = pizza.Descripcion;
-            pizzaToUpdate.LibreGluten = pizza.LibreGluten;
-            return NoContent();
+            else
+            {
+                int intRowsAffected = BD.UpdateById(pizza);
+                if (intRowsAffected > 0)
+                {
+                    return Ok(pizza);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteById(int id) {
+            Pizza pizza = BD.GetById(id);
+            if (pizza == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                int intRowsAffected = BD.DeleteById(id);
+                if (intRowsAffected > 0)
+                {
+                    return Ok(pizza);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
         }
     }
 }
