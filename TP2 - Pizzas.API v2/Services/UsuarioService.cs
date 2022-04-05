@@ -51,7 +51,7 @@ namespace Pizzas.API.Services
         }
 
         public static string RefreshToken(int id){
-            string sqlQuery = $"UPDATE Usuarios SET Token = @token, TokenExpirationDate = DATEADD(minutes, 15, GETDATE()) WHERE Id = @id";
+            string sqlQuery = $"UPDATE Usuarios SET Token = @token, TokenExpirationDate = DATEADD(minute, 15, GETDATE()) WHERE Id = @id";
             int intRowsAffected = 0;
             using (SqlConnection db = BD.GetConnection())
             {

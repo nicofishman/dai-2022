@@ -37,8 +37,13 @@ namespace Pizzas.API.Controllers
             {
                 return BadRequest();
             }
-                int rowsAffected = PizzaService.Add(pizza);
-                return CreatedAtAction(nameof(Create), new { id = pizza.Id }, pizza);
+            string token = Request.Headers["token"];
+            int rowsAffected = PizzaService.Add(pizza, token);
+            if (rowsAffected == -1)
+            {
+                return Unauthorized();
+            }
+            return CreatedAtAction(nameof(Create), new { id = pizza.Id }, pizza);
         }
 
         [HttpPut("{id}")]
@@ -55,7 +60,16 @@ namespace Pizzas.API.Controllers
             }
             else
             {
-                int intRowsAffected = PizzaService.UpdateById(pizza);
+                string token = Request.Headers["token"];
+                int intRowsAffected = PizzaService.UpdateById(pizza, token);
+                if (intRowsAffected == 0)
+                {
+                    return Unauthorized();
+                }
+                if (intRowsAffected == -1)
+                {
+                    return Unauthorized();
+                }
                 if (intRowsAffected > 0)
                 {
                     return Ok(pizza);
@@ -77,7 +91,12 @@ namespace Pizzas.API.Controllers
             }
             else
             {
-                int intRowsAffected = PizzaService.DeleteById(id);
+                string token = Request.Headers["token"];
+                int intRowsAffected = PizzaService.DeleteById(id, token);
+                if (intRowsAffected == -1)
+                {
+                    return Unauthorized();
+                }
                 if (intRowsAffected > 0)
                 {
                     return Ok(pizza);

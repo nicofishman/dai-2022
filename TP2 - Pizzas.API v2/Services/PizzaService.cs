@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using Dapper;
 using Pizzas.API.Models;
 using Pizzas.API.Utils;
+using Pizzas.API.Helper;
 
 namespace Pizzas.API.Services
 {
@@ -32,45 +33,57 @@ namespace Pizzas.API.Services
             }
             return returnEntity;
         }
-        public static int Add(Pizza pizza)
+        public static int Add(Pizza pizza, string token)
         {
             string sqlQuery = $"INSERT INTO Pizzas (Nombre, LibreGluten, Importe, Descripcion) VALUES (@nombre, @libreGluten, @importe, @descripcion) ";
             int intRowsAffected = 0;
-            using (SqlConnection db = BD.GetConnection())
-            {
-                intRowsAffected = db.Execute(sqlQuery, new {
-                    nombre= pizza.Nombre,
-                    libreGluten= pizza.LibreGluten,
-                    importe= pizza.Importe,
-                    descripcion= pizza.Descripcion
-                });
+            if (SecurityHelper.isValidToken(token)){
+                using (SqlConnection db = BD.GetConnection())
+                {
+                    intRowsAffected = db.Execute(sqlQuery, new {
+                        nombre= pizza.Nombre,
+                        libreGluten= pizza.LibreGluten,
+                        importe= pizza.Importe,
+                        descripcion= pizza.Descripcion
+                    });
+                }
+            } else {
+                intRowsAffected = -1;
             }
             return intRowsAffected;
         }
 
-        public static int UpdateById(Pizza pizza)
+        public static int UpdateById(Pizza pizza, string token)
         {
             int intRowsAffected = 0;
             string sqlQuery = $"UPDATE Pizzas SET Nombre = @nombre, LibreGluten = @libreGluten, Importe = @importe, Descripcion = @descripcion WHERE Id = @pizzaId";
-            using (SqlConnection db = BD.GetConnection())
-            {
-                intRowsAffected = db.Execute(sqlQuery, new {
-                    pizzaId = pizza.Id,
-                    nombre= pizza.Nombre,
-                    libreGluten= pizza.LibreGluten,
-                    importe= pizza.Importe,
-                    descripcion= pizza.Descripcion
-                });
+            if (SecurityHelper.isValidToken(token)){
+                using (SqlConnection db = BD.GetConnection())
+                {
+                    intRowsAffected = db.Execute(sqlQuery, new {
+                        pizzaId = pizza.Id,
+                        nombre= pizza.Nombre,
+                        libreGluten= pizza.LibreGluten,
+                        importe= pizza.Importe,
+                        descripcion= pizza.Descripcion
+                    });
+                }
+            } else {
+                intRowsAffected = -1;
             }
             return intRowsAffected;
         }
-        public static int DeleteById(int id)
+        public static int DeleteById(int id, string token)
         {
             string sqlQuery = $"DELETE FROM Pizzas WHERE Id = {id}";
             int intRowsAffected = 0;
-            using (SqlConnection db = BD.GetConnection())
-            {
-                intRowsAffected = db.Execute(sqlQuery);
+            if (SecurityHelper.isValidToken(token)){
+                using (SqlConnection db = BD.GetConnection())
+                {
+                    intRowsAffected = db.Execute(sqlQuery);
+                }
+            } else {
+                intRowsAffected = -1;
             }
             return intRowsAffected;
         }
