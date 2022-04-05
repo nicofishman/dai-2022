@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using Dapper;
 using Pizzas.API.Models;
 using Pizzas.API.Utils;
+using Pizzas.API.Services;
 
 namespace Pizzas.API.Helper
 {
@@ -11,19 +12,9 @@ namespace Pizzas.API.Helper
     {
         public static bool isValidToken(string token)
         {
-            string sqlQuery = $"SELECT TokenExpirationDate FROM Usuarios WHERE Token = @token";
-            using (SqlConnection db = BD.GetConnection())
-            {
-                DateTime? tokenExpirationDate = db.QueryFirstOrDefault<DateTime?>(sqlQuery, new
-                {
-                    token = token
-                });
-                if (tokenExpirationDate == null)
-                {
-                    return false;
-                }
-                return tokenExpirationDate > DateTime.Now;
-            }
+            Usuario user = UsuarioService.GetByToken(token);
+            if (user == null) return false;
+            return user.TokenExpirationDate > DateTime.Now;
         }
 
     }

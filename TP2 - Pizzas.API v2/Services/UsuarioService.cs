@@ -63,5 +63,17 @@ namespace Pizzas.API.Services
             Usuario newUser = GetById(id);
             return newUser.Token;
         }
+
+        public static Usuario GetByToken(string token) {
+            string sqlQuery = $"SELECT * FROM Usuarios WHERE Token = @token";
+            Usuario returnEntity = null;
+            using (SqlConnection db = BD.GetConnection())
+            {
+                returnEntity = db.QueryFirstOrDefault<Usuario>(sqlQuery, new { 
+                    token = token 
+                });
+            }
+            return returnEntity;
+        }
     }
 }
