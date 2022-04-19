@@ -15,17 +15,20 @@ namespace Pizzas.API.Helper
 {
     public class ConfigurationHelper
     {
-        public static IConfiguration GetConfiguration() { 
-            IConfiguration config; 
+        public static IConfiguration GetConfiguration()
+        {
+            IConfiguration config;
             var builder = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true); 
-            config = builder.Build(); 
-            return config; 
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            config = builder.Build();
+            return config;
         }
-        public static void SetConfiguration(){
+        public static void SetConfiguration()
+        {
             string output;
-            using(StreamReader r = new StreamReader("appsettings.json")){
+            using (StreamReader r = new StreamReader("appsettings.json"))
+            {
                 string json = r.ReadToEnd();
                 dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
                 jsonObj["CustomLog"]["LogFolder"] = Directory.GetCurrentDirectory() + @"\Logs";

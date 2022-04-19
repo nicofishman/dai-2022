@@ -27,6 +27,9 @@ namespace Pizzas.API.Utils
         public static void LogError(string errorData, string errorMessage){
             LogError(errorData, errorMessage, null, null);
         }
+        public static void LogError(Exception ex, string className, string functionName){
+            LogError(ex.Message, className, functionName, null);
+        }
 
         public static void LogError(Exception ex, string className, string contexto, object datos){
             LogError(ex.Message, className, contexto, datos);

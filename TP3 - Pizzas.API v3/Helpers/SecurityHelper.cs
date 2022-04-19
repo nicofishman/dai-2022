@@ -12,9 +12,16 @@ namespace Pizzas.API.Helper
     {
         public static bool isValidToken(string token)
         {
-            Usuario user = UsuarioService.GetByToken(token);
-            if (user == null) return false;
-            return user.TokenExpirationDate > DateTime.Now;
+            try
+            {
+                Usuario user = UsuarioService.GetByToken(token);
+                if (user == null) return false;
+                return user.TokenExpirationDate > DateTime.Now;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
     }

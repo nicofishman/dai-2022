@@ -1,11 +1,10 @@
 using Pizzas.API.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Pizzas.API.Services;
+using Pizzas.API.Utils;
 
 namespace Pizzas.API.Controllers
 {
@@ -16,18 +15,44 @@ namespace Pizzas.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(PizzaService.GetAll());
+            try
+            {
+                return Ok(PizzaService.GetAll());
+            }
+            catch (Exception ex)
+            {
+                MethodBase m = MethodBase.GetCurrentMethod();
+                CustomLog.LogError(ex, m.DeclaringType.Name, m.Name);
+                return Problem(
+                    detail: ex.Message,
+                    title: "Error al obtener las pizzas",
+                    statusCode: 500
+                );
+            }
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            Pizza pizza = PizzaService.GetById(id);
-            if (pizza == null)
+            try
             {
-                return NotFound();
+                Pizza pizza = PizzaService.GetById(id);
+                if (pizza == null)
+                {
+                    return NotFound();
+                }
+                return Ok(pizza);
             }
-            return Ok(pizza);
+            catch (Exception ex)
+            {
+                MethodBase m = MethodBase.GetCurrentMethod();
+                CustomLog.LogError(ex, m.DeclaringType.Name, m.Name);
+                return Problem(
+                    detail: ex.Message,
+                    title: "Error al obtener la pizza",
+                    statusCode: 500
+                );
+            }
         }
 
         [HttpPost]
@@ -37,13 +62,26 @@ namespace Pizzas.API.Controllers
             {
                 return BadRequest();
             }
-            string token = Request.Headers["token"];
-            int rowsAffected = PizzaService.Add(pizza, token);
-            if (rowsAffected == -1)
+            try
             {
-                return Unauthorized();
+                string token = Request.Headers["token"];
+                int rowsAffected = PizzaService.Add(pizza, token);
+                if (rowsAffected == -1)
+                {
+                    return Unauthorized();
+                }
+                return CreatedAtAction(nameof(Create), new { id = pizza.Id }, pizza);
             }
-            return CreatedAtAction(nameof(Create), new { id = pizza.Id }, pizza);
+            catch (Exception ex)
+            {
+                MethodBase m = MethodBase.GetCurrentMethod();
+                CustomLog.LogError(ex, m.DeclaringType.Name, m.Name);
+                return Problem(
+                    detail: ex.Message,
+                    title: "Error al crear la pizza",
+                    statusCode: 500
+                );
+            }
         }
 
         [HttpPut("{id}")]
@@ -53,58 +91,85 @@ namespace Pizzas.API.Controllers
             {
                 return BadRequest();
             }
-            Pizza pizzaToUpdate = PizzaService.GetById(id);
-            if (pizzaToUpdate == null)
+            try
             {
-                return NotFound();
-            }
-            else
-            {
-                string token = Request.Headers["token"];
-                int intRowsAffected = PizzaService.UpdateById(pizza, token);
-                if (intRowsAffected == 0)
-                {
-                    return Unauthorized();
-                }
-                if (intRowsAffected == -1)
-                {
-                    return Unauthorized();
-                }
-                if (intRowsAffected > 0)
-                {
-                    return Ok(pizza);
-                }
-                else
+
+                Pizza pizzaToUpdate = PizzaService.GetById(id);
+                if (pizzaToUpdate == null)
                 {
                     return NotFound();
                 }
+                else
+                {
+                    string token = Request.Headers["token"];
+                    int intRowsAffected = PizzaService.UpdateById(pizza, token);
+                    if (intRowsAffected == 0)
+                    {
+                        return Unauthorized();
+                    }
+                    if (intRowsAffected == -1)
+                    {
+                        return Unauthorized();
+                    }
+                    if (intRowsAffected > 0)
+                    {
+                        return Ok(pizza);
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MethodBase m = MethodBase.GetCurrentMethod();
+                CustomLog.LogError(ex, m.DeclaringType.Name, m.Name);
+                return Problem(
+                    detail: ex.Message,
+                    title: "Error al actualizar la pizza",
+                    statusCode: 500
+                );
             }
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteById(int id)
         {
-            Pizza pizza = PizzaService.GetById(id);
-            if (pizza == null)
+            try
             {
-                return NotFound();
-            }
-            else
-            {
-                string token = Request.Headers["token"];
-                int intRowsAffected = PizzaService.DeleteById(id, token);
-                if (intRowsAffected == -1)
-                {
-                    return Unauthorized();
-                }
-                if (intRowsAffected > 0)
-                {
-                    return Ok(pizza);
-                }
-                else
+                Pizza pizza = PizzaService.GetById(id);
+                if (pizza == null)
                 {
                     return NotFound();
                 }
+                else
+                {
+                    string token = Request.Headers["token"];
+                    int intRowsAffected = PizzaService.DeleteById(id, token);
+                    if (intRowsAffected == -1)
+                    {
+                        return Unauthorized();
+                    }
+                    if (intRowsAffected > 0)
+                    {
+                        return Ok(pizza);
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MethodBase m = MethodBase.GetCurrentMethod();
+                CustomLog.LogError(ex, m.DeclaringType.Name, m.Name);
+                return Problem(
+                    detail: ex.Message,
+                    title: "Error al eliminar la pizza",
+                    statusCode: 500
+                );
             }
         }
     }
