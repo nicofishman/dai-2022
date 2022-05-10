@@ -9,5 +9,9 @@
         "start": "node index01.js"
     },
     "author": "",
-    "license": "ISC"
+    "license": "ISC",
+    "dependencies": {
+        "iso-country-currency": "^0.6.0",
+        "url": "^0.11.0"
+    }
 }
