@@ -1,8 +1,13 @@
 import fs from 'fs';
 
-export const cambiarAdentroDelArchivo = (newcontent, path) => {
+export const copiar = (path, newpath) => {
     try {
-        fs.writeFileSync(path, newcontent);
+        const cositas = fs.readFileSync(path, 'utf8');
+        if (fs.existsSync(newpath)) {
+            fs.writeFileSync(newpath, cositas);
+        } else {
+            console.log('El archivo no existe');
+        }
     } catch (error) {
         console.log(error);
     }

@@ -9,10 +9,19 @@ const paramsToObject = (entries) => {
 }
 
 export const decomposeUrl = (urlString) => {
-    const myURL = new URL(urlString)
-    return {
-        host: myURL.hostname,
-        path: myURL.pathname,
-        params: paramsToObject(new URLSearchParams(myURL.search).entries())
+    try {
+        const myURL = new URL(urlString)
+        return {
+            host: myURL.hostname,
+            path: myURL.pathname,
+            params: paramsToObject(new URLSearchParams(myURL.search).entries())
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            host: '',
+            path: '',
+            params: {}
+        }
     }
 }
