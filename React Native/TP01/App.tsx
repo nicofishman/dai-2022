@@ -9,12 +9,12 @@ export default function App () {
     const [texto, setTexto] = useState('');
     const [textoMostrar, setTextoMostrar] = useState('');
 
-    const tw = useTailwind();
+    const tailwind = useTailwind();
 
     return (
         <TailwindProvider utilities={utilities}>
-            <View style={tw('bg-black w-full h-screen justify-center items-center')}>
-                <View style={tw('w-12 items-center justify-center p-10 bg-red-300')}>
+            <View style={tailwind('bg-black w-full h-screen justify-center items-center')}>
+                <View style={tailwind('w-12 items-center justify-center p-10 bg-red-300')}>
                     <TextInput placeholder="Que onda bro" style={styles.input} onChangeText={(e) => setTexto(e)} />
                     <TouchableOpacity style={styles.button} onPress={() => setTextoMostrar(texto)}>
                         <Text style={{ color: 'white', textTransform: 'uppercase' }}>Presioname bb</Text>
